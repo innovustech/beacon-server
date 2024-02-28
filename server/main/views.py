@@ -13,15 +13,6 @@ chat = ChatOpenAI(model='gpt-4')
 
 SYSTEM_TEMPLATE = 'You are a machine that is an expert and updated in latest job trends'
 
-UPSKILLING_TEMPLATE = """
-I want to know more about the career as a web developer. First, I want to know exactly 2 main skills needed to be a web developer. For each skill, I want exactly 2 specific suggestions as to where or how I can learn and develop it (example: website course, youtube video). I then want for each skill to know exactly a single way to verify or assess that certain skill that I learned (example: official certifications).
-
-sourceA and sourceB will be resources for skillA. sourceC and sourceD will be skillB. assessmentA will be for skillA and assessmentB will be for skillB
-
-Strictly follow the format for the response. The format of the response should strictly be a JSON string to be parsed like the following example below:
-[{"id":"Node 1","label":"skillA","details":{"description":"description of skillA"},"group":1},{"id":"Node 2","label":"skillB","details":{"description":"description of skillB"},"group":3},{"id":"Node 3","label":"sourceA","details":{"description":"description of sourceA"},"group":3},{"id":"Node 4","label":"sourceB","details":{"description":"description of sourceB"},"group":3},{"id":"Node 5","label":"sourceC","details":{"description":"description of sourceC"},"group":3},{"id":"Node 6","label":"sourceD","details":{"description":"description of sourceD"},"group":3},{"id":"Node 7","label":"assessmentA","details":{"description":"description of assessmentA"},"group":3},{"id":"Node 8","label":"assessmentB","details":{"description":"description of assessmentB"},"group":3}]
-The response should only strictly be in the JSON string format as stated above. Do not add anything additional text except for the JSON string
-"""
 NO_ITEM = '- None'
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -104,6 +95,22 @@ class GenerateTopCareers(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class GenerateUpskilling(View):
     def post(self,request):
+        data = json.loads(request.body)
+        career = data['career']
+
+        UPSKILLING_TEMPLATE = "I want to know more about the career as a " 
+        
+        UPSKILLING_TEMPLATE += career + """
+        . First, I want to know exactly 2 main skills needed for my selected career. For each skill, I want exactly 2 specific suggestions as to where or how I can learn and develop it (example: website course, youtube video). I then want for each skill to know exactly a single way to verify or assess that certain skill that I learned (example: official certifications).
+
+        sourceA and sourceB will be resources for skillA. sourceC and sourceD will be skillB. assessmentA will be for skillA and assessmentB will be for skillB
+
+        Strictly follow the format for the response. The format of the response should strictly be a JSON string to be parsed like the following example below:
+        [{"id":"Node 7","label":"skillA","details":{"description":"description of skillA"},"group":3},{"id":"Node 8","label":"skillB","details":{"description":"description of skillB"},"group":3},{"id":"Node 9","label":"sourceA","details":{"description":"description of sourceA"},"group":3},{"id":"Node 10","label":"sourceB","details":{"description":"description of sourceB"},"group":3},{"id":"Node 11","label":"sourceC","details":{"description":"description of sourceC"},"group":3},{"id":"Node 12","label":"sourceD","details":{"description":"description of sourceD"},"group":3},{"id":"Node 13","label":"assessmentA","details":{"description":"description of assessmentA"},"group":3},{"id":"Node 14","label":"assessmentB","details":{"description":"description of assessmentB"},"group":3}]
+        
+        The response should only strictly be in the JSON string format as stated above. Do not add anything additional text except for the JSON string in the response. Do not wrap the JSON string into extra quotations.
+        """
+
         langchain_messages = [
             SystemMessage(content=SYSTEM_TEMPLATE),
             HumanMessage(content=UPSKILLING_TEMPLATE)
