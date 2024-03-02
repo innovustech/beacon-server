@@ -11,7 +11,7 @@ _ = load_dotenv(find_dotenv())
 
 chat = ChatOpenAI(model='gpt-4')
 
-SYSTEM_TEMPLATE = 'You are a machine that is an expert and updated in latest job trends'
+SYSTEM_TEMPLATE = 'You are a machine that is an expert and updated in latest job trends. You are an expert in identifying skills that are needed for a certain career, as well as where and to learn those skills. You are are also an expert on where to assess those skills to verify that a person\'s skill is ready for the workforce.'
 
 NO_ITEM = '- None'
 
@@ -19,11 +19,29 @@ NO_ITEM = '- None'
 class GenerateTopCareers(View):
     def post(self, request):
         data = json.loads(request.body)
-        interest = data["interest"]
-        history = data["history"]
-        strength = data["strength"]
-        weakness = data["weakness"]
-        education = data["education"]
+        profile = data['profile']
+        profile_list = [
+            {
+                "name": 'interest',
+                "data": profile['interest']
+            },
+            {
+                "name": 'career history',
+                "data": profile['history']
+            },
+            {
+                "name": 'weaknesses',
+                "data": profile['weakness']
+            },
+            {
+                "name": 'strengths',
+                "data": profile['strength']
+            },
+            {
+                "name": 'education background',
+                "data": profile['education']
+            },  
+        ]
 
         CAREER_TEMPLATE = """
         Use the following details below to recommend 5 most related career occupations with details. The format of the response should be strictly a JSON string of a list with elements following the exact format example below:
@@ -34,40 +52,14 @@ class GenerateTopCareers(View):
         Do not add anything to the output except what is asked by the prompt.
         """
 
-        CAREER_TEMPLATE += 'My interests include:'
-        if interest:
-            for item in interest:
-                CAREER_TEMPLATE += '\n - ' + item
-        else:
-            CAREER_TEMPLATE += NO_ITEM
-
-        CAREER_TEMPLATE += 'My career history include:'
-        if history:
-            for item in history:
-                CAREER_TEMPLATE += '\n - ' + item
-        else:
-            CAREER_TEMPLATE += NO_ITEM
-
-        CAREER_TEMPLATE += 'My strengths include:'
-        if strength:
-            for item in strength:
-                CAREER_TEMPLATE += '\n - ' + item
-        else:
-            CAREER_TEMPLATE += NO_ITEM
-
-        CAREER_TEMPLATE += 'My weaknesses include:'
-        if weakness:
-            for item in weakness:
-                CAREER_TEMPLATE += '\n - ' + item
-        else:
-            CAREER_TEMPLATE += NO_ITEM
-
-        CAREER_TEMPLATE += 'My educational background include:'
-        if education:
-            for item in education:
-                CAREER_TEMPLATE += '\n - ' + item
-        else:
-            CAREER_TEMPLATE += NO_ITEM
+        for profile_item in profile_list:
+            CAREER_TEMPLATE += 'My ' + profile_item['name'] + ' include:\n'
+            if profile_item['data']:
+                for item in profile_item['data']:
+                    CAREER_TEMPLATE += ' - ' + item
+            else:
+                CAREER_TEMPLATE += NO_ITEM
+            CAREER_TEMPLATE += '\n'
 
         CAREER_TEMPLATE += """
         You should also generate the following descriptions per career topic:
@@ -116,3 +108,71 @@ class GenerateUpskilling(View):
         answer = json.loads(response.content)
 
         return JsonResponse({'skills': answer})
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GenerateRelatedCareers(View):
+    def post(self, request):
+        data = json.loads(request.body)
+        career = data['career']
+        profile = data['profile']
+        profile_list = [
+            {
+                "name": 'interest',
+                "data": profile['interest']
+            },
+            {
+                "name": 'career history',
+                "data": profile['history']
+            },
+            {
+                "name": 'weaknesses',
+                "data": profile['weakness']
+            },
+            {
+                "name": 'strengths',
+                "data": profile['strength']
+            },
+            {
+                "name": 'education background',
+                "data": profile['education']
+            },  
+        ]
+        
+
+        RELATED_CAREER_TEMPLATE = "I am currently a "
+
+        RELATED_CAREER_TEMPLATE += career + """ and I want to know what are the top 5 careers related to my current one. Use the following details below to recommend 5 most related career occupations to my current one with details. The format of the response should be strictly a JSON string of a list with elements following the exact format example below:
+        {"name":"Data Scientist","description":"sample description","salary":"100000 - 100000","companies":["Google","Oracle"],"qualifications":["python","web scraping"]}
+        
+        For the salary, let the currency be in Philippine Pesos (PHP).
+
+        Do not add anything to the output except what is asked by the prompt.
+        """
+
+        for profile_item in profile_list:
+            RELATED_CAREER_TEMPLATE += 'My ' + profile_item['name'] + ' include:\n'
+            if profile_item['data']:
+                for item in profile_item['data']:
+                    RELATED_CAREER_TEMPLATE += ' - ' + item
+            else:
+                RELATED_CAREER_TEMPLATE += NO_ITEM
+            RELATED_CAREER_TEMPLATE += '\n'
+
+        RELATED_CAREER_TEMPLATE += """You should also generate the following descriptions per career topic:
+        1. Brief description of the career (200 word limit)
+        2. Salary range (example: 100,000 - 200,000 PHP)
+        3. Top hiring companies (example: Google, Oracle)
+        4. Qualification List (example: java, linear algebra, web scraping)
+
+        The response should only strictly be a list in the format as stated above. Do not include double or single quotes at the start or end, so reponse should only start with brackets. Do not add anything additional text except for the JSON string
+        """
+
+        langchain_messages = [
+            SystemMessage(content=SYSTEM_TEMPLATE),
+            HumanMessage(content=RELATED_CAREER_TEMPLATE)
+        ]
+
+        response = chat.invoke(langchain_messages)
+        answer = json.loads(response.content)
+
+        return JsonResponse({'careers': answer})
