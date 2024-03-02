@@ -46,8 +46,6 @@ class GenerateTopCareers(View):
         CAREER_TEMPLATE = """
         Use the following details below to recommend 5 most related career occupations with details. The format of the response should be strictly a JSON string of a list with elements following the exact format example below:
         {"name":"Data Scientist","description":"sample description","salary":"100000 - 100000","companies":["Google","Oracle"],"qualifications":["python","web scraping"]}
-        
-        For the salary, let the currency be in Philippine Pesos (PHP).
 
         Do not add anything to the output except what is asked by the prompt.
         """
@@ -64,7 +62,7 @@ class GenerateTopCareers(View):
         CAREER_TEMPLATE += """
         You should also generate the following descriptions per career topic:
         1. Brief description of the career (200 word limit)
-        2. Salary range (example: 100,000 - 200,000 PHP)
+        2. Salary per month range (example: 100,000 - 200,000 PHP)
         3. Top hiring companies (example: Google, Oracle)
         4. Qualification List (example: java, linear algebra, web scraping)
 
@@ -143,8 +141,6 @@ class GenerateRelatedCareers(View):
 
         RELATED_CAREER_TEMPLATE += career + """ and I want to know what are the top 5 careers related to my current one. Use the following details below to recommend 5 most related career occupations to my current one with details. The format of the response should be strictly a JSON string of a list with elements following the exact format example below:
         {"name":"Data Scientist","description":"sample description","salary":"100000 - 100000","companies":["Google","Oracle"],"qualifications":["python","web scraping"]}
-        
-        For the salary, let the currency be in Philippine Pesos (PHP).
 
         Do not add anything to the output except what is asked by the prompt.
         """
@@ -160,7 +156,7 @@ class GenerateRelatedCareers(View):
 
         RELATED_CAREER_TEMPLATE += """You should also generate the following descriptions per career topic:
         1. Brief description of the career (200 word limit)
-        2. Salary range (example: 100,000 - 200,000 PHP)
+        2. Salary per month range (example: 100,000 - 200,000 PHP)
         3. Top hiring companies (example: Google, Oracle)
         4. Qualification List (example: java, linear algebra, web scraping)
 
