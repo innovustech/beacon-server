@@ -26,7 +26,7 @@ class GenerateTopCareers(View):
         education = data["education"]
 
         CAREER_TEMPLATE = """
-        Use the following details below to recommend 5 most related career occupations with details.The format of the response should be strictly a JSON string of a list with elements following the exact format example below:
+        Use the following details below to recommend 5 most related career occupations with details. The format of the response should be strictly a JSON string of a list with elements following the exact format example below:
         {"name":"Data Scientist","description":"sample description","salary":"100000 - 100000","companies":["Google","Oracle"],"qualifications":["python","web scraping"]}
         
         For the salary, let the currency be in Philippine Pesos (PHP).
@@ -55,7 +55,7 @@ class GenerateTopCareers(View):
         else:
             CAREER_TEMPLATE += NO_ITEM
 
-        CAREER_TEMPLATE += 'My wekanesses include:'
+        CAREER_TEMPLATE += 'My weaknesses include:'
         if weakness:
             for item in weakness:
                 CAREER_TEMPLATE += '\n - ' + item
@@ -71,8 +71,8 @@ class GenerateTopCareers(View):
 
         CAREER_TEMPLATE += """
         You should also generate the following descriptions per career topic:
-        1. brief description of the career (200 word limit)
-        2. salary range (example: 100,000 - 200,000 PHP)
+        1. Brief description of the career (200 word limit)
+        2. Salary range (example: 100,000 - 200,000 PHP)
         3. Top hiring companies (example: Google, Oracle)
         4. Qualification List (example: java, linear algebra, web scraping)
 
@@ -99,7 +99,7 @@ class GenerateUpskilling(View):
         UPSKILLING_TEMPLATE = "I want to know more about the career as a " 
         
         UPSKILLING_TEMPLATE += career + """
-        . First, I want to know at all main skills (as specific as possible) needed for my selected career, with description (200 word limit). For each skill, I want at all needed specific suggestions as to where or how I can learn and develop it (example: website course, youtube video), with description (200 word limit). I then want for each skill to know exactly a single way (as specific as possible) to verify or assess that certain skill that I learned (example: official certifications), with description (200 word limit).
+        . First, I want to know all main skills (as specific as possible) needed for my selected career, with description (200 word limit). For each skill, I want all needed specific suggestions on where or how I can learn and develop it (example: website courses, youtube videos), with description (200 word limit). I then want for each skill to know exactly a single way (as specific as possible) to verify or assess that certain skill that I learned (example: official certifications), with description (200 word limit).
 
         Strictly follow the format for the response. The format of the response should strictly be a list of elements following the format of a JSON string to be parsed like the following example below:
         {"name":"skillName","description":"skillDescription","resources":[{"name":"resourceName","description":"resourceDescription","link":"resourceLink"},...],"assessment":{"name":"assessmentName","description":"assessmenetDescription","link":"assessmentLink"},...}
