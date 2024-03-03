@@ -176,3 +176,31 @@ class GenerateRelatedCareers(View):
         answer = json.loads(response.content)
 
         return JsonResponse({'careers': answer})
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GenerateSkillResources(View):
+    def post(self, request):
+        data = json.loads(request.body)
+        skill = data['skill']
+        existing_resources = data['existingResources']
+
+        SKILL_RESOURCE_TEMPLATE = "I am currently learning the skill \"" + skill + "\" using the following resources:\n"
+
+        for resource in existing_resources:
+            SKILL_RESOURCE_TEMPLATE += " - " + resource["name"] + "at " + resource["link"] + "\n"
+
+        SKILL_RESOURCE_TEMPLATE += "\nI want to know more resources for the skill \"" + skill +  "\" with description (200 word limit)"
+        SKILL_RESOURCE_TEMPLATE += """ Strictly follow the format for the response. The format of the response should strictly be a list of elements following the format of a JSON string to be parsed like the following example below:
+        [{"name":"resourceName","description":"resourceDescription","link":"resourceLink"},...]
+        The response should only strictly be list of elements in a JSON string format as stated above. Do not add anything additional text except for the JSON string in the response. Do not wrap the JSON string into extra quotations.
+        """
+
+        langchain_messages = [
+            SystemMessage(content=SYSTEM_TEMPLATE),
+            HumanMessage(content=SKILL_RESOURCE_TEMPLATE)
+        ]
+
+        response = chat.invoke(langchain_messages)
+        answer = json.loads(response.content)
+
+        return JsonResponse({'resources': answer})
