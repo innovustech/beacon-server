@@ -113,6 +113,7 @@ class GenerateRelatedCareers(View):
         data = json.loads(request.body)
         career = data['career']
         profile = data['profile']
+        existing_careers = data['existingCareers']
         profile_list = [
             {
                 "name": 'interest',
@@ -141,9 +142,12 @@ class GenerateRelatedCareers(View):
 
         RELATED_CAREER_TEMPLATE += career + """ and I want to know what are the top 5 careers related to my current one. Use the following details below to recommend 5 most related career occupations to my current one with details. The format of the response should be strictly a JSON string of a list with elements following the exact format example below:
         {"name":"Data Scientist","description":"sample description","salary":"100000 - 100000","companies":["Google","Oracle"],"qualifications":["python","web scraping"]}
-
         Do not add anything to the output except what is asked by the prompt.
+        In addition, strictly do not include these careers in the response:
         """
+
+        for existing_career in existing_careers:
+            RELATED_CAREER_TEMPLATE += ' - ' + existing_career + '\n'
 
         for profile_item in profile_list:
             RELATED_CAREER_TEMPLATE += 'My ' + profile_item['name'] + ' include:\n'
