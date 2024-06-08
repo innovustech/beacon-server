@@ -204,3 +204,8 @@ class GenerateSkillResources(View):
         answer = json.loads(response.content)
 
         return JsonResponse({'resources': answer})
+
+@method_decorator(csrf_exempt, name='dispatch')
+class TestServer(View):
+    def post(self, request):
+        return JsonResponse({'message': 'Beacon Server is Live'})
