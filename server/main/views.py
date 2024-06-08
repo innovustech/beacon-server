@@ -31,11 +31,11 @@ class GenerateTopCareers(View):
             },
             {
                 "name": 'weaknesses',
-                "data": profile['weakness']
+                "data": profile['weaknesses']
             },
             {
                 "name": 'strengths',
-                "data": profile['strength']
+                "data": profile['strengths']
             },
             {
                 "name": 'education background',
@@ -125,11 +125,11 @@ class GenerateRelatedCareers(View):
             },
             {
                 "name": 'weaknesses',
-                "data": profile['weakness']
+                "data": profile['weaknesses']
             },
             {
                 "name": 'strengths',
-                "data": profile['strength']
+                "data": profile['strengths']
             },
             {
                 "name": 'education background',
