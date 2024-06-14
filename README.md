@@ -1,3 +1,13 @@
-Server for the Beacon Application
+# Server for the Beacon Application
 
-FE Repository: [Beacon Frontend](https://github.com/maxellmilay/beacon-final)
+> Check out the Beacon frontend application [here](https://github.com/maxellmilay/beacon-final)
+
+## Techstack
+### Backend
+- Django
+- Langchain
+### Deployment
+- GCP Compute Engine
+- Supervisor
+- Gunicorn
+- Nginx
